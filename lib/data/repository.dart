@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_mini_list/blocs/bloc.dart';
+import 'package:flutter_mini_list/blocs/list/bloc.dart';
 import 'package:flutter_mini_list/data/models.dart';
 import 'package:flutter_mini_list/ui/home_page.dart';
 import 'package:get_it/get_it.dart';
@@ -12,15 +12,12 @@ Future setUP(BuildContext context) async {
   GetIt.instance.registerSingleton<AppBackend>(
     AppBackend(
       mockData,
-      durationForFetches: Duration(),
+      durationForFetches: Duration(seconds: 1),
     ),
   );
   Navigator.of(context).pushReplacement(
     MaterialPageRoute(
-      builder: (context) => BlocProvider(
-        create: (context) => ListBloc()..add(RefreshListEvent()),
-        child: HomePage(),
-      ),
+      builder: (context) => HomePage(),
     ),
   );
   print("Then Here");
@@ -45,10 +42,15 @@ List<ToDoItem> mockData = [
 ];
 
 class AppBackend {
-  final List<ToDoItem> _todoList;
+  List<ToDoItem> _todoList;
   final Duration durationForFetches;
+  bool showReverse;
 
-  AppBackend(this._todoList, {this.durationForFetches});
+  AppBackend(
+    this._todoList, {
+    this.durationForFetches,
+    this.showReverse = false,
+  });
 
   Future<List<ToDoItem>> fetchData() async {
     await Future.delayed(durationForFetches);
@@ -79,6 +81,17 @@ class AppBackend {
       return _todoList;
     } catch (e) {
       return _todoList;
+    }
+  }
+
+
+  Future<bool> reverseOrder() async {
+    try {
+      await Future.delayed(durationForFetches);
+      _todoList = _todoList.reversed.toList();
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }

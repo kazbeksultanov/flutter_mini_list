@@ -1,7 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_mini_list/blocs/settings/bloc.dart';
 import 'package:flutter_mini_list/ui/splash_page.dart';
+
+import 'blocs/list/bloc.dart';
 
 Future<void> main() async {
   BlocSupervisor.delegate = SimpleBlocDelegate();
@@ -31,12 +34,19 @@ class SimpleBlocDelegate extends BlocDelegate {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => ListBloc()..add(RefreshListEvent())),
+        BlocProvider(
+            create: (context) => SettingsBloc(listBloc: BlocProvider.of<ListBloc>(context))),
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: SplashPage(),
       ),
-      home: SplashPage(),
     );
   }
 }

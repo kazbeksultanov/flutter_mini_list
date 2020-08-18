@@ -4,7 +4,7 @@ import 'package:flutter_mini_list/data/models.dart';
 import 'package:flutter_mini_list/data/repository.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:get_it/get_it.dart';
-import './bloc.dart';
+import 'bloc.dart';
 
 class ListBloc extends Bloc<ListEvent, ListState> {
   @override
@@ -17,6 +17,7 @@ class ListBloc extends Bloc<ListEvent, ListState> {
   ) {
     return super.transformEvents(events.debounceTime(Duration(milliseconds: 300)), next);
   }
+
 
   @override
   Stream<ListState> mapEventToState(

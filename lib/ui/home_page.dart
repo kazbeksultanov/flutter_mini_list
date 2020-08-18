@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_mini_list/blocs/bloc.dart';
+import 'package:flutter_mini_list/blocs/list/bloc.dart';
 import 'package:flutter_mini_list/data/models.dart';
+import 'package:flutter_mini_list/ui/settings.dart';
 
 class HomePage extends StatelessWidget {
   final titleController = TextEditingController();
@@ -12,6 +14,14 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Mini ToDo List"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SettingsPage()));
+            },
+          ),
+        ],
       ),
       body: _MainBody(),
       floatingActionButton: _Fab(
@@ -96,42 +106,48 @@ class _Fab extends StatelessWidget {
 class _MainBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ListBloc, ListState>(
-      builder: (BuildContext context, state) {
-        if (state is LoadingListState || state is InitialListState) {
-          return Container(
-            child: Center(child: CircularProgressIndicator()),
-          );
-        }
+    return RefreshIndicator(
+      onRefresh: () async {
+        print("Asdas");
+        BlocProvider.of<ListBloc>(context).add(RefreshListEvent());
+      },
+      child: BlocBuilder<ListBloc, ListState>(
+        builder: (BuildContext context, state) {
+          if (state is LoadingListState || state is InitialListState) {
+            return Container(
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
 
-        if (state is LoadedListState) {
-          return Container(
-            child: ListView.builder(
-              itemCount: state.list.length,
-              itemBuilder: (context, index) {
-                return _ToDoItemCard(
-                  toDoItem: state.list[index],
-                  count: index,
-                );
-              },
-            ),
-          );
-        }
+          if (state is LoadedListState) {
+            return Container(
+              child: ListView.builder(
+                itemCount: state.list.length,
+                itemBuilder: (context, index) {
+                  return _ToDoItemCard(
+                    toDoItem: state.list[index],
+                    count: index,
+                  );
+                },
+              ),
+            );
+          }
 
-        if(state is NoContentListState){
+          if (state is NoContentListState) {
+            return Container(
+              child: Center(
+                child: Text("Add New ToDo to show"),
+              ),
+            );
+          }
+
           return Container(
             child: Center(
-              child: Text("Add New ToDo to show"),
+              child: Text("Error"),
             ),
           );
-        }
-
-        return Container(
-          child: Center(
-            child: Text("Error"),
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 }
