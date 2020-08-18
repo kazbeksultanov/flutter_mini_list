@@ -30,7 +30,7 @@ class SimpleBlocDelegate extends BlocDelegate {
     print(error);
   }
 }
-
+//changes in master
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
