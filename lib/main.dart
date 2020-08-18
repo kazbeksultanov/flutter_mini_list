@@ -34,6 +34,7 @@ class SimpleBlocDelegate extends BlocDelegate {
 //changes in master2
 //changes in master3
 //changes in master4
+//changes in master5
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
